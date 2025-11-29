@@ -1,0 +1,100 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Wotfard",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#CBA476",
+    "accent": "#43CAE6",
+    "background": "#BFBFBF",
+    "textPrimary": "#000000",
+    "link": "#43CAE6"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Wotfard",
+      "heading": "Wotfard"
+    },
+    "fontStacks": {
+      "heading": [
+        "Wotfard"
+      ],
+      "body": [
+        "Wotfard"
+      ],
+      "paragraph": [
+        "Wotfard"
+      ]
+    },
+    "fontSizes": {
+      "h1": "50px",
+      "h2": "50px",
+      "body": "17px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "3px"
+  },
+  "components": {
+    "input": {
+      "borderColor": "#CCCCCC",
+      "borderRadius": "3px"
+    },
+    "buttonPrimary": {
+      "background": "#43CAE6",
+      "textColor": "#FFFFFF",
+      "borderRadius": "0px",
+      "shadow": "none"
+    },
+    "buttonSecondary": {
+      "background": "#DEDFE0",
+      "textColor": "#333333",
+      "borderRadius": "0px",
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": "File saved at: attached_assets/logo.svg",
+    "favicon": "https://www.doctordiegoserrano.com/wp-content/uploads/2023/02/cropped-doctor-diego-serrano-favicon-32x32.png",
+    "ogImage": null
+  },
+  "__framework_hints": [
+    "WordPress 6.8.3"
+  ],
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "The logo in the header matches the brand name 'Dentista en Zaragoza - Diego Serrano' and is visible, making it the main brand logo.",
+    "confidence": 0.95
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 1,
+      "text": "ACEPTAR",
+      "reasoning": "Button #1 has a vibrant blue background (#43CAE6) which is a strong indicator for a primary CTA. It also has action-oriented text 'ACEPTAR', making it the main call-to-action."
+    },
+    "secondary": {
+      "index": 0,
+      "text": "RECHAZAR",
+      "reasoning": "Button #0 has a muted background color (#DEDFE0) and is less prominent compared to Button #1. It serves as a secondary action with the text 'RECHAZAR', which is less action-oriented than the primary button."
+    },
+    "confidence": 0.95
+  },
+  "personality": {
+    "tone": "professional",
+    "energy": "medium",
+    "targetAudience": "patients seeking dental services in Zaragoza"
+  },
+  "designSystem": {
+    "framework": "unknown",
+    "componentLibrary": null
+  },
+  "confidence": {
+    "buttons": 0.95,
+    "colors": 0.9,
+    "overall": 0.925
+  }
+}
