@@ -1,16 +1,34 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { enhanceSmile } from "./gemini";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // put application routes here
-  // prefix all routes with /api
+  // API endpoint for smile enhancement using Gemini
+  app.post("/api/enhance-smile", async (req, res) => {
+    try {
+      const { image } = req.body;
+      
+      if (!image) {
+        return res.status(400).json({ error: "No image provided" });
+      }
 
-  // use storage to perform CRUD operations on the storage interface
-  // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+      if (typeof image !== "string" || !image.startsWith("data:image/")) {
+        return res.status(400).json({ error: "Invalid image format" });
+      }
+
+      const enhancedImage = await enhanceSmile(image);
+      
+      res.json({ enhancedImage });
+    } catch (error: any) {
+      console.error("Enhance smile error:", error);
+      res.status(500).json({ 
+        error: error.message || "Failed to process image" 
+      });
+    }
+  });
 
   return httpServer;
 }
