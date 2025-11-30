@@ -1,15 +1,14 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
-// Using the javascript_gemini blueprint
-// GEMINI_API_KEY is the user's own Google AI API key
-// GEMINI_MODEL is configurable via environment variable (default: gemini-2.5-flash-image)
-
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  console.warn("Warning: GEMINI_API_KEY is not set. Smile enhancement will not work.");
-}
-
-const ai = new GoogleGenAI({ apiKey: apiKey || "" });
+// Using Replit's AI Integrations for Gemini access
+// This provides Gemini-compatible API access without requiring your own API key
+const ai = new GoogleGenAI({
+  apiKey: process.env.AI_INTEGRATIONS_GEMINI_API_KEY,
+  httpOptions: {
+    apiVersion: "",
+    baseUrl: process.env.AI_INTEGRATIONS_GEMINI_BASE_URL,
+  },
+});
 
 const SMILE_ENHANCEMENT_PROMPT = `You are an expert dental aesthetics AI. Your task is to enhance the smile in this photo while maintaining the person's natural appearance.
 
@@ -23,10 +22,6 @@ Instructions:
 Create a beautiful, natural-looking smile transformation that shows what professional dental aesthetics could achieve.`;
 
 export async function enhanceSmile(base64Image: string): Promise<string> {
-  if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is not configured. Please add your Google AI API key.");
-  }
-
   const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-image";
   
   // Extract the base64 data and mime type from the data URL
@@ -84,8 +79,8 @@ export async function enhanceSmile(base64Image: string): Promise<string> {
   } catch (error: any) {
     console.error("Gemini API error:", error);
     
-    if (error.message?.includes("API key")) {
-      throw new Error("Invalid API key. Please check your GEMINI_API_KEY configuration.");
+    if (error.message?.includes("API key") || error.message?.includes("401")) {
+      throw new Error("AI service authentication failed. Please try again.");
     }
     
     if (error.message?.includes("quota") || error.message?.includes("rate")) {
