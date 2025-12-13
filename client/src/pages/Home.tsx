@@ -28,6 +28,16 @@ export default function Home() {
     };
   }, []);
 
+  // Connect stream to video element after it's mounted
+  useEffect(() => {
+    if (showCamera && streamRef.current && videoRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch(() => {
+        // Autoplay may fail, but the video element should still show the stream
+      });
+    }
+  }, [showCamera]);
+
   const enhanceMutation = useMutation({
     mutationFn: async (imageData: string) => {
       setProcessingState("processing");
@@ -114,9 +124,8 @@ export default function Home() {
         video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } }
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      // Set showCamera to true first, then useEffect will connect the stream
+      // to the video element after it's mounted
       setShowCamera(true);
     } catch {
       toast({
