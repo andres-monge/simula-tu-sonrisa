@@ -1,4 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
+import { sanitizeForLogging } from "./logger";
 
 // Using Replit's AI Integrations for Gemini access
 // This provides Gemini-compatible API access without requiring your own API key
@@ -77,7 +78,7 @@ export async function enhanceSmile(base64Image: string): Promise<string> {
 
     throw new Error("No image was generated in the response");
   } catch (error: any) {
-    console.error("Gemini API error:", error);
+    console.error("Gemini API error:", sanitizeForLogging(error));
     
     if (error.message?.includes("API key") || error.message?.includes("401")) {
       throw new Error("AI service authentication failed. Please try again.");

@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { enhanceSmile } from "./gemini";
+import { sanitizeForLogging } from "./logger";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -23,7 +24,7 @@ export async function registerRoutes(
       
       res.json({ enhancedImage });
     } catch (error: any) {
-      console.error("Enhance smile error:", error);
+      console.error("Enhance smile error:", sanitizeForLogging(error));
       res.status(500).json({ 
         error: error.message || "Failed to process image" 
       });
