@@ -1,96 +1,83 @@
 # Smile Simulator - Design Guidelines
 
 ## Design Approach
-**Reference-Based**: Modern dental practice websites (clear.com, SmileDirectClub) combined with medical SaaS aesthetics. Professional, trustworthy, conversion-focused with emphasis on visual proof through before/after imagery.
+**Reference-Based**: Modern dental practice website (doctordiegoserrano.com) with clean, professional aesthetics. Emphasis on trust, conversion, and visual proof through before/after imagery.
 
-**Brand Adherence**: Strict alignment with Doctor Diego Serrano's established brand identity - Wotfard typography, gold/cyan accent palette, minimal border radius, professional tone.
+**Brand Adherence**: Strict alignment with Doctor Diego Serrano's updated brand identity - DM Sans typography (clean modern alternative), gold (#CBA476) and cyan (#43CAE6) accent palette, rounded buttons (pill shape for CTAs), professional tone.
 
 ## Core Design Elements
 
 ### Typography
-- **Primary Font**: Wotfard (all elements)
+- **Primary Font**: DM Sans (all elements) - clean, modern humanist sans-serif
+- **Heading Font**: DM Serif Display (optional for display headings)
 - **Heading Hierarchy**: 
-  - H1: 50px, bold weight, tight letter-spacing for impact
-  - H2: 32px, medium weight for section headers
-  - Body: 17px, regular weight for descriptions
+  - H1: 42px, semibold weight, tight letter-spacing
+  - H2: 28px, medium weight for section headers
+  - Body: 18px, regular weight for descriptions
   - Small text: 14px for disclaimers and secondary info
+
+### Color Palette
+- **Primary Gold (#CBA476)**: Main accent, CTA buttons, active states
+- **Accent Cyan (#43CAE6)**: Links, secondary accent
+- **Background (#F5F3F0)**: Light warm background (lighter version of brand gray)
+- **White (#FFFFFF)**: Content containers, cards
+- **Black (#000000)**: Primary text
+- **Muted Gray (#6B6B6B)**: Secondary text
+- **Border Gray (#E5E5E5)**: Borders, dividers
 
 ### Layout System
 **Spacing Primitives**: Tailwind units 4, 8, 16, 24 for consistency
-- Component padding: p-8 to p-16
-- Section spacing: py-16 to py-24
-- Element gaps: gap-4 to gap-8
-- Container: max-w-6xl, centered with px-8
+- Component padding: p-6 to p-12
+- Section spacing: py-12 to py-20
+- Element gaps: gap-4 to gap-6
+- Container: max-w-5xl, centered with px-4 md:px-8
 
 ### Component Library
 
 **Header Section**
 - Clean white background with logo (left) and navigation (right)
-- Minimal height (h-20), sticky positioning
+- Height: h-16, sticky positioning with blur background
 - Logo using provided SVG asset
-- Simple navigation: "Inicio | Servicios | Contacto"
+- CTA button: "Pedir una cita" with rounded-full styling (#CBA476 background)
 
 **Hero/Upload Section**
-- Centered layout with prominent heading: "Simula Tu Sonrisa Perfecta"
+- Centered layout with prominent heading
 - Subheading explaining the instant preview capability
-- Large drag-and-drop upload zone (min-h-64) with dashed border (#CCCCCC)
-- Upload icon (cloud upload) with "Arrastra tu foto aquí o haz clic para seleccionar"
-- File type hint: "JPG, PNG (máx. 5MB)"
-- Background: clean white, no hero image (focus on functionality)
+- Large drag-and-drop upload zone with subtle border
+- Upload icon with clear instructions
+- Background: warm off-white, clean aesthetic
 
 **Before/After Comparison**
-- Two-column grid (grid-cols-1 md:grid-cols-2) with gap-8
+- Two-column grid (grid-cols-1 md:grid-cols-2) with gap-6
 - Each image container:
-  - Aspect ratio 3:4 or 1:1 for portraits
+  - Aspect ratio 3:4 for portraits
   - Rounded corners (rounded-lg)
-  - Subtle shadow (shadow-lg)
-  - Label overlay at bottom ("ANTES" / "DESPUÉS") with semi-transparent background
-- Container background: light gray (#F8F8F8) to frame images
+  - Subtle shadow
+  - Label overlay at bottom ("ANTES" / "DESPUÉS")
 
 **CTA Section**
-- Positioned below comparison
-- Large primary button: "Pedir una Cita" 
-  - Background: #43CAE6 (cyan accent)
-  - Text: white, 18px, medium weight
-  - Padding: px-12 py-4
-  - Border-radius: 0px (per brand)
-  - Full-width on mobile, auto-width centered on desktop
-- Supporting text above button: "¿Te gusta el resultado? Agenda tu consulta gratuita hoy"
-- Optional: Phone number and WhatsApp link below button
-
-**Trust Elements**
-- Small disclaimer section: "Esta es una simulación digital. Los resultados reales pueden variar."
-- Brief description (2-3 sentences) about Dr. Diego Serrano's experience
-- Trust badge or certification mention if applicable
+- Primary button: "Pedir una Cita" 
+  - Background: #CBA476 (primary gold)
+  - Text: white, 16-18px, medium weight
+  - Padding: px-8 py-3
+  - Border-radius: rounded-full (pill shape)
+- Supporting text above button
 
 ### Images
-**No hero image** - this is a functional tool, not a traditional landing page
-**User-uploaded images** are the central visual element
+**No hero image** - functional tool focused
+**User-uploaded images** are central visual element
 **Logo**: SVG provided in assets (header)
-**Icons**: Heroicons via CDN
-- Upload icon (cloud-arrow-up)
-- Check icons for features
-- Phone/WhatsApp icons for contact
-
-### Color Application
-- **Primary Gold (#CBA476)**: Accent borders, underlines for emphasis
-- **Cyan (#43CAE6)**: Primary CTA button, links, active states
-- **Background Gray (#BFBFBF)**: Page background (subtle, light version)
-- **White**: Content containers, cards
-- **Black (#000000)**: Primary text
-- **Light Gray (#CCCCCC)**: Borders, dividers
+**Icons**: Lucide icons
 
 ### Responsive Behavior
 - **Mobile-first**: Single column layout, full-width elements
 - **Tablet (md:)**: Two-column before/after
 - **Desktop (lg:)**: Max-width container, maintained proportions
-- Upload zone adapts: larger on desktop, compact on mobile
 
 ### Interaction States
-- Upload zone: Dashed border becomes solid on drag-over, light cyan background
-- Primary button: Brightness increase on hover (no blur needed for solid background)
-- Images: Subtle scale on hover (scale-105)
-- Loading state: Spinner overlay during AI processing with "Creando tu nueva sonrisa..."
+- Upload zone: Border becomes accent color on drag-over
+- Primary button: Subtle hover state using elevate system
+- Images: Subtle scale on hover
 
 ## Key UX Principles
 1. **Immediate clarity**: User knows exactly what to do (upload photo)

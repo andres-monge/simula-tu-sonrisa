@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Camera, Download, Loader2, X, Calendar } from "lucide-react";
+import { Upload, Camera, Download, Loader2, X } from "lucide-react";
 import logoSvg from "@assets/logo.svg";
 
 type ProcessingState = "idle" | "uploading" | "processing" | "complete" | "error";
@@ -183,19 +183,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           <a href="https://www.doctordiegoserrano.com" target="_blank" rel="noopener noreferrer" data-testid="link-logo">
-            <img src={logoSvg} alt="Dr. Diego Serrano - Estética Dental" className="h-10 md:h-12" />
+            <img src={logoSvg} alt="Dr. Diego Serrano - Estética Dental" className="h-8 md:h-10" />
           </a>
           <a
             href="https://www.doctordiegoserrano.com/contacto/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-accent text-white px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium rounded-full transition-opacity hover:opacity-90"
             data-testid="link-header-cta"
           >
-            <Calendar className="h-4 w-4" />
             <span className="hidden sm:inline">Pedir una cita</span>
             <span className="sm:hidden">Cita</span>
           </a>
@@ -227,7 +226,7 @@ export default function Home() {
               <Button
                 onClick={capturePhoto}
                 size="lg"
-                className="bg-accent border-accent-border text-white"
+                className="bg-primary border-primary-border text-primary-foreground rounded-full"
                 data-testid="button-capture"
               >
                 <Camera className="h-5 w-5 mr-2" />
@@ -389,10 +388,9 @@ export default function Home() {
               href="https://www.doctordiegoserrano.com/contacto/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-accent text-white px-8 md:px-12 py-4 text-lg font-medium transition-opacity hover:opacity-90"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 md:px-12 py-4 text-lg font-medium rounded-full transition-opacity hover:opacity-90"
               data-testid="button-cta-appointment"
             >
-              <Calendar className="h-5 w-5" />
               Pedir una Cita
             </a>
             <p className="text-sm text-muted-foreground mt-6 max-w-lg mx-auto">
@@ -410,7 +408,7 @@ export default function Home() {
               href="https://www.doctordiegoserrano.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent hover:underline"
+              className="text-primary hover:underline"
               data-testid="link-footer-website"
             >
               www.doctordiegoserrano.com
