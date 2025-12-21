@@ -3,10 +3,11 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Camera, Download, Loader2, X } from "lucide-react";
+import { Upload, Camera, Download, Loader2, X, Pencil, Send } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import logoSvg from "@assets/logo.svg";
 
-type ProcessingState = "idle" | "uploading" | "processing" | "complete" | "error";
+type ProcessingState = "idle" | "uploading" | "processing" | "complete" | "error" | "modifying";
 
 export default function Home() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -14,6 +15,8 @@ export default function Home() {
   const [processingState, setProcessingState] = useState<ProcessingState>("idle");
   const [isDragging, setIsDragging] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [showModifyInput, setShowModifyInput] = useState(false);
+  const [modifyPrompt, setModifyPrompt] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -65,6 +68,49 @@ export default function Home() {
       });
     },
   });
+
+  const modifyMutation = useMutation({
+    mutationFn: async ({ originalImg, currentResultImg, prompt }: { originalImg: string; currentResultImg: string; prompt: string }) => {
+      setProcessingState("modifying");
+      const response = await fetch("/api/modify-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          originalImage: originalImg,
+          currentResultImage: currentResultImg,
+          userPrompt: prompt,
+        }),
+      });
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Error al modificar la imagen");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setEnhancedImage(data.modifiedImage);
+      setProcessingState("complete");
+      setShowModifyInput(false);
+      setModifyPrompt("");
+    },
+    onError: (error: Error) => {
+      setProcessingState("complete");
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo modificar la imagen. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleModifySubmit = useCallback(() => {
+    if (!originalImage || !enhancedImage || !modifyPrompt.trim()) return;
+    modifyMutation.mutate({
+      originalImg: originalImage,
+      currentResultImg: enhancedImage,
+      prompt: modifyPrompt.trim(),
+    });
+  }, [originalImage, enhancedImage, modifyPrompt, modifyMutation]);
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -178,6 +224,8 @@ export default function Home() {
     setOriginalImage(null);
     setEnhancedImage(null);
     setProcessingState("idle");
+    setShowModifyInput(false);
+    setModifyPrompt("");
     stopCamera();
   }, [stopCamera]);
 
@@ -330,6 +378,14 @@ export default function Home() {
                         Esto puede tardar unos segundos
                       </p>
                     </div>
+                  ) : processingState === "modifying" ? (
+                    <div className="flex flex-col items-center gap-4 p-8 text-center">
+                      <Loader2 className="h-12 w-12 text-primary animate-spin" />
+                      <p className="text-lg font-medium">Modificando tu sonrisa...</p>
+                      <p className="text-sm text-muted-foreground">
+                        Aplicando tus cambios
+                      </p>
+                    </div>
                   ) : enhancedImage ? (
                     <img
                       src={enhancedImage}
@@ -353,24 +409,67 @@ export default function Home() {
             </div>
 
             {processingState === "complete" && enhancedImage && (
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-                <Button
-                  onClick={downloadImage}
-                  variant="outline"
-                  size="lg"
-                  data-testid="button-download"
-                >
-                  <Download className="h-5 w-5 mr-2" />
-                  Descargar imagen
-                </Button>
-                <Button
-                  onClick={reset}
-                  variant="ghost"
-                  size="lg"
-                  data-testid="button-new-photo"
-                >
-                  Probar con otra foto
-                </Button>
+              <div className="flex flex-col items-center gap-4 mt-8">
+                <div className="flex flex-col sm:flex-row justify-center gap-4 flex-wrap">
+                  <Button
+                    onClick={downloadImage}
+                    variant="outline"
+                    size="lg"
+                    data-testid="button-download"
+                  >
+                    <Download className="h-5 w-5 mr-2" />
+                    Descargar imagen
+                  </Button>
+                  <Button
+                    onClick={() => setShowModifyInput(!showModifyInput)}
+                    variant="outline"
+                    size="lg"
+                    data-testid="button-modify"
+                  >
+                    <Pencil className="h-5 w-5 mr-2" />
+                    Modificar imagen
+                  </Button>
+                  <Button
+                    onClick={reset}
+                    variant="ghost"
+                    size="lg"
+                    data-testid="button-new-photo"
+                  >
+                    Probar con otra foto
+                  </Button>
+                </div>
+                
+                {showModifyInput && (
+                  <div className="w-full max-w-lg space-y-3">
+                    <Textarea
+                      placeholder="Describe qué cambios quieres hacer... (ej: hazlos más blancos, mejora la alineación, quiero una sonrisa más amplia)"
+                      value={modifyPrompt}
+                      onChange={(e) => setModifyPrompt(e.target.value)}
+                      className="min-h-24 resize-none"
+                      data-testid="input-modify-prompt"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        onClick={() => {
+                          setShowModifyInput(false);
+                          setModifyPrompt("");
+                        }}
+                        variant="ghost"
+                        data-testid="button-cancel-modify"
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={handleModifySubmit}
+                        disabled={!modifyPrompt.trim()}
+                        data-testid="button-submit-modify"
+                      >
+                        <Send className="h-4 w-4 mr-2" />
+                        Aplicar cambios
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </section>
