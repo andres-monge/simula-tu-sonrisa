@@ -192,7 +192,7 @@ export default function Home() {
             href="https://www.doctordiegoserrano.com/contacto/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-opacity hover:opacity-90 bg-amber-100 text-gray-900"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-opacity hover:opacity-90 bg-orange-100 text-gray-900"
             data-testid="link-header-cta"
           >
             <span className="hidden sm:inline">Pedir una cita</span>
@@ -204,7 +204,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8 md:py-16 max-w-5xl">
         <section className="text-center mb-10 md:mb-16">
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4" data-testid="text-title">
-            Antes y después
+            SIMULA TU SONRISA PERFECTA
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Nada refleja mejor nuestro trabajo que el <strong>antes y después</strong> de quienes han confiado en nosotros.
