@@ -1,0 +1,82 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "mr-eaves-sans",
+      "count": 89
+    },
+    {
+      "family": "DM Serif Display",
+      "count": 3
+    },
+    {
+      "family": "themify",
+      "count": 1
+    }
+  ],
+  "colors": {
+    "primary": "#CBA476",
+    "accent": "#43CAE6",
+    "background": "#BFBFBF",
+    "textPrimary": "#000000",
+    "link": "#43CAE6"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "mr-eaves-sans",
+      "heading": "mr-eaves-sans"
+    },
+    "fontStacks": {
+      "body": [
+        "mr-eaves-sans"
+      ],
+      "heading": [
+        "mr-eaves-sans"
+      ],
+      "paragraph": [
+        "mr-eaves-sans"
+      ]
+    },
+    "fontSizes": {
+      "h1": "15px",
+      "h2": "15px",
+      "body": "21px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "6px"
+  },
+  "components": {},
+  "images": {
+    "logo": "File saved at: attached_assets/logo.svg",
+    "favicon": "https://www.doctordiegoserrano.com/wp-content/uploads/2025/12/cropped-fav-diego-serrano-32x32.png",
+    "ogImage": null
+  },
+  "__framework_hints": [
+    "WordPress 6.9"
+  ],
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "Strong indicators: header logo linking to homepage, header location, visible, highest logo on page, reasonable size, SVG format. Score: 105 (clear winner by 105 points)",
+    "confidence": 0.9
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": -1,
+      "text": "N/A",
+      "reasoning": "LLM failed"
+    },
+    "secondary": {
+      "index": -1,
+      "text": "N/A",
+      "reasoning": "LLM failed"
+    },
+    "confidence": 0
+  },
+  "confidence": {
+    "buttons": 0,
+    "colors": 0,
+    "overall": 0
+  }
+}
