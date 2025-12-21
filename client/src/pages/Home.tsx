@@ -207,8 +207,8 @@ export default function Home() {
             SIMULA TU SONRISA PERFECTA
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            <strong>Descubre cómo podría lucir tu nueva sonrisa</strong> con nuestra tecnología de simulación avanzada.
-            Sube una foto y visualiza tu transformación en segundos. <strong>¡Pruébalo ahora de forma gratuita!</strong>
+            Descubre cómo podría lucir tu nueva sonrisa.
+            Sube una foto y visualiza tu transformación en segundos.
           </p>
         </section>
 
@@ -247,10 +247,10 @@ export default function Home() {
         ) : !originalImage ? (
           <section className="mb-10 md:mb-16">
             <Card
-              className={`relative min-h-64 md:min-h-80 border-2 border-dashed transition-all cursor-pointer ${
+              className={`relative min-h-64 md:min-h-80 border transition-all cursor-pointer shadow-sm ${
                 isDragging
                   ? "border-accent bg-accent/5"
-                  : "border-input hover:border-primary/50"
+                  : "border-gray-300/50"
               }`}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
@@ -263,11 +263,8 @@ export default function Home() {
                   <Upload className="h-8 w-8 md:h-10 md:w-10 text-primary" />
                 </div>
                 <h2 className="text-xl md:text-2xl font-semibold mb-2">
-                  Simula Tu Sonrisa Perfecta
-                </h2>
-                <p className="text-muted-foreground mb-6 max-w-md">
-                  Arrastra tu foto aquí o haz clic para seleccionar
-                </p>
+                  Arrastra tu foto aquí o haz clic para subirla
+                </h2>                
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
                     variant="outline"
