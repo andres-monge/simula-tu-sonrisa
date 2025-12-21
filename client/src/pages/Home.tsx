@@ -166,12 +166,15 @@ export default function Home() {
 
   const startCamera = useCallback(async () => {
     try {
+      const isMobile = window.innerWidth < 768;
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } }
+        video: {
+          facingMode: "user",
+          width: { ideal: isMobile ? 720 : 1280 },
+          height: { ideal: isMobile ? 1280 : 720 }
+        }
       });
       streamRef.current = stream;
-      // Set showCamera to true first, then useEffect will connect the stream
-      // to the video element after it's mounted
       setShowCamera(true);
     } catch {
       toast({
@@ -261,37 +264,39 @@ export default function Home() {
         </section>
 
         {showCamera ? (
-          <Card className="relative overflow-hidden bg-black aspect-video max-w-2xl mx-auto mb-8">
+          <div className="fixed inset-0 z-50 bg-black flex flex-col">
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
-              className="w-full h-full object-cover"
+              className="flex-1 w-full h-full object-cover"
               data-testid="video-camera"
             />
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
-              <Button
-                onClick={capturePhoto}
-                size="lg"
-                className="bg-primary border-primary-border text-primary-foreground rounded-full"
-                data-testid="button-capture"
-              >
-                <Camera className="h-5 w-5 mr-2" />
-                Capturar foto
-              </Button>
-              <Button
-                onClick={stopCamera}
-                variant="outline"
-                size="lg"
-                className="bg-white/90"
-                data-testid="button-cancel-camera"
-              >
-                <X className="h-5 w-5 mr-2" />
-                Cancelar
-              </Button>
+            <div className="absolute bottom-0 left-0 right-0 pb-8 pt-4 px-4 bg-gradient-to-t from-black/80 to-transparent">
+              <div className="flex justify-center gap-4">
+                <Button
+                  onClick={capturePhoto}
+                  size="lg"
+                  className="bg-primary border-primary-border text-primary-foreground rounded-full shadow-lg"
+                  data-testid="button-capture"
+                >
+                  <Camera className="h-5 w-5 mr-2" />
+                  Capturar foto
+                </Button>
+                <Button
+                  onClick={stopCamera}
+                  variant="outline"
+                  size="lg"
+                  className="bg-white/90 rounded-full shadow-lg"
+                  data-testid="button-cancel-camera"
+                >
+                  <X className="h-5 w-5 mr-2" />
+                  Cancelar
+                </Button>
+              </div>
             </div>
-          </Card>
+          </div>
         ) : !originalImage ? (
           <section className="mb-10 md:mb-16">
             <Card
