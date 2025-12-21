@@ -14,7 +14,7 @@ const ai = new GoogleGenAI({
 const SMILE_ENHANCEMENT_PROMPT = `You are an expert dental aesthetics AI. Your task is to enhance the smile in this photo while maintaining the person's natural appearance.
 
 Instructions:
-1. Improve the teeth appearance: make them whiter, straighter, and more symmetrical
+1. Improve the teeth appearance: make them a natural white, straighter, and more symmetrical, as if they were in a toothpaste advert
 2. Enhance the smile to look natural and beautiful
 3. Keep the rest of the face and image exactly the same
 4. Maintain the original lighting, colors, and style of the photo
