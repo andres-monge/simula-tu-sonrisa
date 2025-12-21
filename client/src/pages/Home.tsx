@@ -183,7 +183,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+      <header className="sticky top-0 z-50 w-full bg-black">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           <a href="https://www.doctordiegoserrano.com" target="_blank" rel="noopener noreferrer" data-testid="link-logo">
             <img src={logoSvg} alt="Dr. Diego Serrano - Estética Dental" className="h-8 md:h-10" />
@@ -192,7 +192,7 @@ export default function Home() {
             href="https://www.doctordiegoserrano.com/contacto/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium rounded-full transition-opacity hover:opacity-90"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-opacity hover:opacity-90 bg-amber-100 text-gray-900"
             data-testid="link-header-cta"
           >
             <span className="hidden sm:inline">Pedir una cita</span>
