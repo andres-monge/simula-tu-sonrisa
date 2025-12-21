@@ -207,8 +207,8 @@ export default function Home() {
             SIMULA TU SONRISA PERFECTA
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Nada refleja mejor nuestro trabajo que el <strong>antes y después</strong> de quienes han confiado en nosotros.
-            La <strong>satisfacción de nuestros pacientes</strong> y la transformación de sus sonrisas son el mejor aval de lo que hacemos.
+            <strong>Descubre cómo podría lucir tu nueva sonrisa</strong> con nuestra tecnología de simulación avanzada.
+            Sube una foto y visualiza tu transformación en segundos. <strong>¡Pruébalo ahora de forma gratuita!</strong>
           </p>
         </section>
 
