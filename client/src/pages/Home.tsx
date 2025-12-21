@@ -192,7 +192,7 @@ export default function Home() {
             href="https://www.doctordiegoserrano.com/contacto/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-opacity hover:opacity-90 bg-orange-100 text-gray-900"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full transition-opacity hover:opacity-90 bg-yellow-200 text-gray-900"
             data-testid="link-header-cta"
           >
             <span className="hidden sm:inline">Pedir una cita</span>
