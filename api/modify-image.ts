@@ -1,5 +1,4 @@
-import { modifyImage } from "../server/gemini";
-import { sanitizeForLogging } from "../server/logger";
+import { modifyImage } from "./lib/gemini";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
@@ -45,7 +44,7 @@ export default async function handler(req: any, res: any) {
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({ modifiedImage });
   } catch (error: any) {
-    console.error("Modify image error:", sanitizeForLogging(error));
+    console.error("Modify image error:", error?.message || error);
     return res.status(500).json({
       error: error?.message || "Failed to modify image",
     });

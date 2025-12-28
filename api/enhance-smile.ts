@@ -1,5 +1,4 @@
-import { enhanceSmile } from "../server/gemini";
-import { sanitizeForLogging } from "../server/logger";
+import { enhanceSmile } from "./lib/gemini";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
@@ -24,7 +23,7 @@ export default async function handler(req: any, res: any) {
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({ enhancedImage });
   } catch (error: any) {
-    console.error("Enhance smile error:", sanitizeForLogging(error));
+    console.error("Enhance smile error:", error?.message || error);
     return res.status(500).json({
       error: error?.message || "Failed to process image",
     });
