@@ -1,14 +1,32 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import { sanitizeForLogging } from "./logger";
 
-// Using Replit's AI Integrations for Gemini access
-// This provides Gemini-compatible API access without requiring your own API key
+// Vercel-compatible: use a standard Gemini API key.
+// Backwards-compatible: still supports Replit AI Integrations env vars if present.
+const apiKey =
+  process.env.GEMINI_API_KEY || process.env.AI_INTEGRATIONS_GEMINI_API_KEY;
+
+if (!apiKey) {
+  // Fail fast with a helpful error message (shows up in Vercel Function logs)
+  throw new Error(
+    "Missing GEMINI_API_KEY (or AI_INTEGRATIONS_GEMINI_API_KEY). Configure it as an environment variable.",
+  );
+}
+
+const baseUrl =
+  process.env.GEMINI_BASE_URL || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+
 const ai = new GoogleGenAI({
-  apiKey: process.env.AI_INTEGRATIONS_GEMINI_API_KEY,
-  httpOptions: {
-    apiVersion: "",
-    baseUrl: process.env.AI_INTEGRATIONS_GEMINI_BASE_URL,
-  },
+  apiKey,
+  ...(baseUrl
+    ? {
+        httpOptions: {
+          // Replit integrations use a custom base URL. Default Gemini base URL is used when omitted.
+          apiVersion: "",
+          baseUrl,
+        },
+      }
+    : {}),
 });
 
 const SMILE_ENHANCEMENT_PROMPT = `You are an expert dental aesthetics AI. Your task is to enhance the smile in this photo while maintaining the person's natural appearance.
