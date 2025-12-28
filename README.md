@@ -2,6 +2,67 @@
 
 Aplicación web para simular tratamientos dentales utilizando inteligencia artificial. Desarrollada para la clínica del Dr. Diego Serrano.
 
+## Cómo funciona la aplicación
+
+### Descripción general
+
+**Simula Tu Sonrisa** es una herramienta de visualización que permite a los pacientes ver una simulación de cómo quedaría su sonrisa tras diferentes tratamientos dentales. La aplicación utiliza inteligencia artificial generativa de Google (Gemini) para crear imágenes realistas del resultado esperado.
+
+### Flujo de uso
+
+1. **Subida de imagen**: El paciente o profesional sube una fotografía del rostro mostrando la sonrisa actual
+2. **Selección de tratamiento**: Se elige el tipo de tratamiento dental a simular (carillas, blanqueamiento, ortodoncia, etc.)
+3. **Procesamiento con IA**: La imagen se envía a la API de Google Gemini junto con instrucciones específicas del tratamiento
+4. **Resultado**: La IA genera una imagen modificada mostrando cómo quedaría la sonrisa tras el tratamiento
+
+### Modelo de IA utilizado
+
+La aplicación utiliza **Google Gemini**, específicamente modelos con capacidad de generación y edición de imágenes.
+
+Por defecto, el modelo configurado es:
+
+```
+gemini-2.5-flash-image
+```
+
+Este modelo está optimizado para:
+- Generación rápida de imágenes
+- Edición fotorrealista
+- Procesamiento eficiente (menor coste por solicitud)
+
+### Cambiar el modelo de Gemini
+
+Puedes cambiar el modelo utilizado mediante la variable de entorno `GEMINI_MODEL`. Esto es útil si:
+
+- Google lanza un modelo más avanzado
+- Necesitas mayor calidad de imagen
+- Quieres probar diferentes modelos
+
+**Para cambiar el modelo**, modifica el archivo `.env`:
+
+```env
+# Otros modelos disponibles (consulta la documentación de Google para ver la lista actualizada)
+GEMINI_MODEL=gemini-2.5-pro-image
+```
+
+**Modelos compatibles con generación de imágenes** (a fecha de creación de esta guía):
+
+| Modelo | Descripción |
+|--------|-------------|
+| `gemini-2.5-flash-image` | Rápido y económico (recomendado) |
+| `gemini-2.5-pro-image` | Mayor calidad, más lento y costoso |
+| `gemini-2.0-flash-exp-image-generation` | Experimental con capacidades avanzadas |
+
+> **Nota**: Los modelos disponibles pueden cambiar. Consulta la [documentación oficial de Google Gemini](https://ai.google.dev/gemini-api/docs/models) para ver los modelos actuales con soporte para generación de imágenes.
+
+### Consideraciones técnicas
+
+- **Privacidad**: Las imágenes se procesan a través de la API de Google. Consulta la [política de privacidad de Google AI](https://ai.google.dev/terms) para más información
+- **Calidad de entrada**: Para mejores resultados, utiliza fotografías bien iluminadas con la sonrisa claramente visible
+- **Tiempo de procesamiento**: Cada simulación tarda entre 5-15 segundos dependiendo del modelo y la carga del servidor
+
+---
+
 ## Requisitos Previos
 
 Antes de comenzar, asegúrate de tener instalado:
