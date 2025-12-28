@@ -25,35 +25,32 @@ Por defecto, el modelo configurado es:
 gemini-2.5-flash-image
 ```
 
-Este modelo está optimizado para:
+Este modelo (conocido como **Nano Banana**) está optimizado para:
 - Generación rápida de imágenes
 - Edición fotorrealista
 - Procesamiento eficiente (menor coste por solicitud)
 
 ### Cambiar el modelo de Gemini
 
-Puedes cambiar el modelo utilizado mediante la variable de entorno `GEMINI_MODEL`. Esto es útil si:
-
-- Google lanza un modelo más avanzado
-- Necesitas mayor calidad de imagen
-- Quieres probar diferentes modelos
+Puedes cambiar el modelo utilizado mediante la variable de entorno `GEMINI_MODEL`. Hay dos modelos disponibles para generación de imágenes:
 
 **Para cambiar el modelo**, modifica el archivo `.env`:
 
 ```env
-# Otros modelos disponibles (consulta la documentación de Google para ver la lista actualizada)
-GEMINI_MODEL=gemini-2.5-pro-image
+# Cambiar a Nano Banana Pro para mayor calidad
+GEMINI_MODEL=gemini-3-pro-image-preview
 ```
 
-**Modelos compatibles con generación de imágenes** (a fecha de creación de esta guía):
+**Modelos disponibles para generación de imágenes:**
 
-| Modelo | Descripción |
-|--------|-------------|
-| `gemini-2.5-flash-image` | Rápido y económico (recomendado) |
-| `gemini-2.5-pro-image` | Mayor calidad, más lento y costoso |
-| `gemini-2.0-flash-exp-image-generation` | Experimental con capacidades avanzadas |
+| Modelo | Nombre | Descripción |
+|--------|--------|-------------|
+| `gemini-2.5-flash-image` | Nano Banana | Rápido y económico (recomendado por defecto). Optimizado para alta velocidad y bajo coste. |
+| `gemini-3-pro-image-preview` | Nano Banana Pro | Mayor calidad y precisión. Utiliza razonamiento avanzado ("Thinking") para seguir instrucciones complejas y producir imágenes de alta fidelidad. Más lento y costoso. |
 
-> **Nota**: Los modelos disponibles pueden cambiar. Consulta la [documentación oficial de Google Gemini](https://ai.google.dev/gemini-api/docs/models) para ver los modelos actuales con soporte para generación de imágenes.
+**Recomendaciones:**
+- Usa `gemini-2.5-flash-image` para procesamiento rápido y económico
+- Usa `gemini-3-pro-image-preview` cuando necesites resultados de máxima calidad o instrucciones muy específicas
 
 ### Consideraciones técnicas
 
