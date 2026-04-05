@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import { sanitizeForLogging } from "./logger";
+import { sanitizeForLogging } from "./logger.js";
 
 let ai: GoogleGenAI | null = null;
 
