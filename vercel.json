@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm install --ignore-scripts",
   "buildCommand": "npm run build:client",
   "outputDirectory": "dist/public",
   "functions": {
@@ -9,5 +10,3 @@
   },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
-
-
