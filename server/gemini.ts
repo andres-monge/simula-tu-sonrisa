@@ -7,7 +7,7 @@ function getAI(): GoogleGenAI {
   if (ai) return ai;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error("Missing GEMINI_API_KEY environment variable.");
+    throw new Error("Falta la variable de entorno GEMINI_API_KEY.");
   }
   ai = new GoogleGenAI({ apiKey });
   return ai;
@@ -25,29 +25,29 @@ class UserFacingError extends Error {
   }
 }
 
-function toUserFacingError(error: any, model: string): UserFacingError {
-  const message = error?.message || String(error || "");
-  const status = error?.status ?? error?.statusCode ?? error?.code;
+function toUserFacingError(error: unknown, model: string): UserFacingError {
+  const message = error instanceof Error ? error.message : String(error || "");
+  const status = (error as any)?.status ?? (error as any)?.statusCode ?? (error as any)?.code;
 
   if (status === 401 || /API key/i.test(message)) {
-    return new UserFacingError(401, "Gemini authentication failed. Check your GEMINI_API_KEY.");
+    return new UserFacingError(401, "Error de autenticación con el servicio de IA. Verifique la configuración.");
   }
 
   if (status === 404 || (/not found/i.test(message) && /model/i.test(message))) {
-    return new UserFacingError(400, `Gemini model "${model}" was not found. Check GEMINI_MODEL.`);
+    return new UserFacingError(400, "El modelo de IA no está disponible. Contacte al administrador.");
   }
 
   if (status === 429 || /quota/i.test(message) || /rate/i.test(message)) {
     const isZeroQuota = /limit:\s*0/i.test(message);
     if (isZeroQuota) {
       return new UserFacingError(429,
-        `Gemini quota is 0 for model "${model}". Enable billing in Google AI Studio → Dashboard → Usage and Billing.`
+        "La cuota del servicio de IA está en 0. Active la facturación en Google AI Studio."
       );
     }
-    return new UserFacingError(429, "Gemini rate limit exceeded. Please wait and try again.");
+    return new UserFacingError(429, "Límite de uso excedido. Por favor, espere un momento e inténtelo de nuevo.");
   }
 
-  return new UserFacingError(500, `Gemini request failed: ${message || "Unknown error"}`);
+  return new UserFacingError(500, "Error al procesar la imagen. Por favor, inténtelo de nuevo.");
 }
 
 const SMILE_ENHANCEMENT_PROMPT = `You are an expert dental aesthetics AI. Your task is to enhance the smile in this photo while maintaining the person's natural appearance.
@@ -66,7 +66,7 @@ export async function enhanceSmile(base64Image: string): Promise<string> {
 
   const matches = base64Image.match(/^data:([^;]+);base64,(.+)$/);
   if (!matches) {
-    throw new Error("Invalid image format. Please provide a valid base64 image.");
+    throw new Error("Formato de imagen no válido.");
   }
 
   const mimeType = matches[1];
@@ -90,7 +90,7 @@ export async function enhanceSmile(base64Image: string): Promise<string> {
     });
 
     const parts = response.candidates?.[0]?.content?.parts;
-    if (!parts) throw new Error("No response generated from the AI model");
+    if (!parts) throw new Error("No se generó respuesta del modelo de IA");
 
     for (const part of parts) {
       if (part.inlineData?.data) {
@@ -99,8 +99,8 @@ export async function enhanceSmile(base64Image: string): Promise<string> {
       }
     }
 
-    throw new Error("No image was generated in the response");
-  } catch (error: any) {
+    throw new Error("No se generó imagen en la respuesta");
+  } catch (error: unknown) {
     console.error("Gemini API error:", sanitizeForLogging(error));
     throw toUserFacingError(error, model);
   }
@@ -122,18 +122,21 @@ INSTRUCCIONES:
 
 SOLICITUD DEL USUARIO:`;
 
+const MAX_PROMPT_LENGTH = 500;
+
 export async function modifyImage(
   originalImage: string,
   currentResultImage: string,
   userPrompt: string
 ): Promise<string> {
   const model = getModel();
+  const trimmedPrompt = userPrompt.trim().slice(0, MAX_PROMPT_LENGTH);
 
   const originalMatches = originalImage.match(/^data:([^;]+);base64,(.+)$/);
-  if (!originalMatches) throw new Error("Invalid original image format.");
+  if (!originalMatches) throw new Error("Formato de imagen original no válido.");
 
   const currentMatches = currentResultImage.match(/^data:([^;]+);base64,(.+)$/);
-  if (!currentMatches) throw new Error("Invalid current result image format.");
+  if (!currentMatches) throw new Error("Formato de imagen resultado no válido.");
 
   try {
     const response = await getAI().models.generateContent({
@@ -144,7 +147,7 @@ export async function modifyImage(
           parts: [
             { inlineData: { mimeType: originalMatches[1], data: originalMatches[2] } },
             { inlineData: { mimeType: currentMatches[1], data: currentMatches[2] } },
-            { text: `${MODIFICATION_CONTEXT_PROMPT} ${userPrompt}` },
+            { text: `${MODIFICATION_CONTEXT_PROMPT} ${trimmedPrompt}` },
           ],
         },
       ],
@@ -154,7 +157,7 @@ export async function modifyImage(
     });
 
     const parts = response.candidates?.[0]?.content?.parts;
-    if (!parts) throw new Error("No response generated from the AI model");
+    if (!parts) throw new Error("No se generó respuesta del modelo de IA");
 
     for (const part of parts) {
       if (part.inlineData?.data) {
@@ -163,8 +166,8 @@ export async function modifyImage(
       }
     }
 
-    throw new Error("No image was generated in the response");
-  } catch (error: any) {
+    throw new Error("No se generó imagen en la respuesta");
+  } catch (error: unknown) {
     console.error("Gemini API error:", sanitizeForLogging(error));
     throw toUserFacingError(error, model);
   }

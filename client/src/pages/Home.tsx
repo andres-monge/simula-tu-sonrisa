@@ -50,8 +50,8 @@ export default function Home() {
         body: JSON.stringify({ image: imageData }),
       });
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || "Error al procesar la imagen");
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "Error al procesar la imagen");
       }
       return response.json();
     },
@@ -82,8 +82,8 @@ export default function Home() {
         }),
       });
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || "Error al modificar la imagen");
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "Error al modificar la imagen");
       }
       return response.json();
     },
