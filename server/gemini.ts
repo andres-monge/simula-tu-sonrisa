@@ -1,33 +1,54 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import { sanitizeForLogging } from "./logger";
 
-// Vercel-compatible: use a standard Gemini API key.
-// Backwards-compatible: still supports Replit AI Integrations env vars if present.
-const apiKey =
-  process.env.GEMINI_API_KEY || process.env.AI_INTEGRATIONS_GEMINI_API_KEY;
+let ai: GoogleGenAI | null = null;
 
-if (!apiKey) {
-  // Fail fast with a helpful error message (shows up in Vercel Function logs)
-  throw new Error(
-    "Missing GEMINI_API_KEY (or AI_INTEGRATIONS_GEMINI_API_KEY). Configure it as an environment variable.",
-  );
+function getAI(): GoogleGenAI {
+  if (ai) return ai;
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing GEMINI_API_KEY environment variable.");
+  }
+  ai = new GoogleGenAI({ apiKey });
+  return ai;
 }
 
-const baseUrl =
-  process.env.GEMINI_BASE_URL || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+function getModel(): string {
+  return process.env.GEMINI_MODEL || "gemini-2.5-flash-image";
+}
 
-const ai = new GoogleGenAI({
-  apiKey,
-  ...(baseUrl
-    ? {
-        httpOptions: {
-          // Replit integrations use a custom base URL. Default Gemini base URL is used when omitted.
-          apiVersion: "",
-          baseUrl,
-        },
-      }
-    : {}),
-});
+class UserFacingError extends Error {
+  statusCode: number;
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+function toUserFacingError(error: any, model: string): UserFacingError {
+  const message = error?.message || String(error || "");
+  const status = error?.status ?? error?.statusCode ?? error?.code;
+
+  if (status === 401 || /API key/i.test(message)) {
+    return new UserFacingError(401, "Gemini authentication failed. Check your GEMINI_API_KEY.");
+  }
+
+  if (status === 404 || (/not found/i.test(message) && /model/i.test(message))) {
+    return new UserFacingError(400, `Gemini model "${model}" was not found. Check GEMINI_MODEL.`);
+  }
+
+  if (status === 429 || /quota/i.test(message) || /rate/i.test(message)) {
+    const isZeroQuota = /limit:\s*0/i.test(message);
+    if (isZeroQuota) {
+      return new UserFacingError(429,
+        `Gemini quota is 0 for model "${model}". Enable billing in Google AI Studio → Dashboard → Usage and Billing.`
+      );
+    }
+    return new UserFacingError(429, "Gemini rate limit exceeded. Please wait and try again.");
+  }
+
+  return new UserFacingError(500, `Gemini request failed: ${message || "Unknown error"}`);
+}
 
 const SMILE_ENHANCEMENT_PROMPT = `You are an expert dental aesthetics AI. Your task is to enhance the smile in this photo while maintaining the person's natural appearance.
 
@@ -41,33 +62,25 @@ Instructions:
 Create a beautiful, natural-looking smile transformation that shows what professional dental aesthetics could achieve.`;
 
 export async function enhanceSmile(base64Image: string): Promise<string> {
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-image";
-  
-  // Extract the base64 data and mime type from the data URL
+  const model = getModel();
+
   const matches = base64Image.match(/^data:([^;]+);base64,(.+)$/);
   if (!matches) {
     throw new Error("Invalid image format. Please provide a valid base64 image.");
   }
-  
+
   const mimeType = matches[1];
   const imageData = matches[2];
 
   try {
-    const response = await ai.models.generateContent({
-      model: model,
+    const response = await getAI().models.generateContent({
+      model,
       contents: [
         {
           role: "user",
           parts: [
-            {
-              inlineData: {
-                mimeType: mimeType,
-                data: imageData,
-              },
-            },
-            {
-              text: SMILE_ENHANCEMENT_PROMPT,
-            },
+            { inlineData: { mimeType, data: imageData } },
+            { text: SMILE_ENHANCEMENT_PROMPT },
           ],
         },
       ],
@@ -76,19 +89,11 @@ export async function enhanceSmile(base64Image: string): Promise<string> {
       },
     });
 
-    const candidates = response.candidates;
-    if (!candidates || candidates.length === 0) {
-      throw new Error("No response generated from the AI model");
-    }
+    const parts = response.candidates?.[0]?.content?.parts;
+    if (!parts) throw new Error("No response generated from the AI model");
 
-    const content = candidates[0].content;
-    if (!content || !content.parts) {
-      throw new Error("Invalid response structure from the AI model");
-    }
-
-    // Find the image part in the response
-    for (const part of content.parts) {
-      if (part.inlineData && part.inlineData.data) {
+    for (const part of parts) {
+      if (part.inlineData?.data) {
         const outputMimeType = part.inlineData.mimeType || "image/png";
         return `data:${outputMimeType};base64,${part.inlineData.data}`;
       }
@@ -97,16 +102,7 @@ export async function enhanceSmile(base64Image: string): Promise<string> {
     throw new Error("No image was generated in the response");
   } catch (error: any) {
     console.error("Gemini API error:", sanitizeForLogging(error));
-    
-    if (error.message?.includes("API key") || error.message?.includes("401")) {
-      throw new Error("AI service authentication failed. Please try again.");
-    }
-    
-    if (error.message?.includes("quota") || error.message?.includes("rate")) {
-      throw new Error("API rate limit exceeded. Please try again in a moment.");
-    }
-    
-    throw new Error(`Failed to enhance smile: ${error.message || "Unknown error"}`);
+    throw toUserFacingError(error, model);
   }
 }
 
@@ -131,45 +127,24 @@ export async function modifyImage(
   currentResultImage: string,
   userPrompt: string
 ): Promise<string> {
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-image";
-  
+  const model = getModel();
+
   const originalMatches = originalImage.match(/^data:([^;]+);base64,(.+)$/);
-  if (!originalMatches) {
-    throw new Error("Invalid original image format.");
-  }
-  
+  if (!originalMatches) throw new Error("Invalid original image format.");
+
   const currentMatches = currentResultImage.match(/^data:([^;]+);base64,(.+)$/);
-  if (!currentMatches) {
-    throw new Error("Invalid current result image format.");
-  }
-  
-  const originalMimeType = originalMatches[1];
-  const originalImageData = originalMatches[2];
-  const currentMimeType = currentMatches[1];
-  const currentImageData = currentMatches[2];
+  if (!currentMatches) throw new Error("Invalid current result image format.");
 
   try {
-    const response = await ai.models.generateContent({
-      model: model,
+    const response = await getAI().models.generateContent({
+      model,
       contents: [
         {
           role: "user",
           parts: [
-            {
-              inlineData: {
-                mimeType: originalMimeType,
-                data: originalImageData,
-              },
-            },
-            {
-              inlineData: {
-                mimeType: currentMimeType,
-                data: currentImageData,
-              },
-            },
-            {
-              text: `${MODIFICATION_CONTEXT_PROMPT} ${userPrompt}`,
-            },
+            { inlineData: { mimeType: originalMatches[1], data: originalMatches[2] } },
+            { inlineData: { mimeType: currentMatches[1], data: currentMatches[2] } },
+            { text: `${MODIFICATION_CONTEXT_PROMPT} ${userPrompt}` },
           ],
         },
       ],
@@ -178,18 +153,11 @@ export async function modifyImage(
       },
     });
 
-    const candidates = response.candidates;
-    if (!candidates || candidates.length === 0) {
-      throw new Error("No response generated from the AI model");
-    }
+    const parts = response.candidates?.[0]?.content?.parts;
+    if (!parts) throw new Error("No response generated from the AI model");
 
-    const content = candidates[0].content;
-    if (!content || !content.parts) {
-      throw new Error("Invalid response structure from the AI model");
-    }
-
-    for (const part of content.parts) {
-      if (part.inlineData && part.inlineData.data) {
+    for (const part of parts) {
+      if (part.inlineData?.data) {
         const outputMimeType = part.inlineData.mimeType || "image/png";
         return `data:${outputMimeType};base64,${part.inlineData.data}`;
       }
@@ -198,15 +166,6 @@ export async function modifyImage(
     throw new Error("No image was generated in the response");
   } catch (error: any) {
     console.error("Gemini API error:", sanitizeForLogging(error));
-    
-    if (error.message?.includes("API key") || error.message?.includes("401")) {
-      throw new Error("AI service authentication failed. Please try again.");
-    }
-    
-    if (error.message?.includes("quota") || error.message?.includes("rate")) {
-      throw new Error("API rate limit exceeded. Please try again in a moment.");
-    }
-    
-    throw new Error(`Failed to modify image: ${error.message || "Unknown error"}`);
+    throw toUserFacingError(error, model);
   }
 }

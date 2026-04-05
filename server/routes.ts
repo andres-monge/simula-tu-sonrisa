@@ -25,9 +25,9 @@ export async function registerRoutes(
       res.json({ enhancedImage });
     } catch (error: any) {
       console.error("Enhance smile error:", sanitizeForLogging(error));
-      res.status(500).json({ 
-        error: error.message || "Failed to process image" 
-      });
+      const statusCode =
+        typeof error?.statusCode === "number" ? error.statusCode : 500;
+      res.status(statusCode).send(error?.message || "Failed to process image");
     }
   });
 
@@ -56,9 +56,9 @@ export async function registerRoutes(
       res.json({ modifiedImage });
     } catch (error: any) {
       console.error("Modify image error:", sanitizeForLogging(error));
-      res.status(500).json({ 
-        error: error.message || "Failed to modify image" 
-      });
+      const statusCode =
+        typeof error?.statusCode === "number" ? error.statusCode : 500;
+      res.status(statusCode).send(error?.message || "Failed to modify image");
     }
   });
 

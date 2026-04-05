@@ -25,8 +25,18 @@ A Spanish-language marketing demo web app for a cosmetic dentist (Dr. Diego Serr
 - **Styling**: Brand colors from Dr. Diego Serrano's website
 
 ## Environment Variables
-- `GEMINI_API_KEY`: Google AI API key (stored in Replit Secrets)
-- `GEMINI_MODEL`: Gemini model name (default: gemini-2.5-flash-image)
+- **Direct (Google AI Studio / Gemini Developer API)**:
+  - `GEMINI_API_KEY`: Google AI Studio API key
+  - `GEMINI_MODEL`: Model name (default: `gemini-2.5-flash-image`)
+  - `GEMINI_API_VERSION` (optional): Set to `v1` / `v1beta` / `v1alpha` if you need a specific API version
+- **Replit proxy integration (works on Replit)**:
+  - `AI_INTEGRATIONS_GEMINI_API_KEY`
+  - `AI_INTEGRATIONS_GEMINI_BASE_URL`
+  - (Optional overrides) `GEMINI_MODEL`, `GEMINI_API_VERSION`
+
+Notes:
+- If you see `429 RESOURCE_EXHAUSTED` with `limit: 0` when running locally/Vercel, that usually means the Google project behind your API key has **0 quota** (commonly because billing/tier is not enabled for that project, or the model is not available in your region/tier). In Google AI Studio go to **Dashboard → Usage and Billing → Billing** and enable billing for the project.
+- To see which models your key can access, run: `npm run gemini:models`
 
 ## Project Structure
 ```

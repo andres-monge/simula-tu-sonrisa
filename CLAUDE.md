@@ -40,10 +40,9 @@ The dev server runs on port 5000 and serves both API and client.
 
 ## Environment Variables
 
-- `AI_INTEGRATIONS_GEMINI_API_KEY` - Gemini API key (via Replit AI Integrations)
-- `AI_INTEGRATIONS_GEMINI_BASE_URL` - Gemini base URL
+- `GEMINI_API_KEY` - Google AI Studio API key (required)
 - `GEMINI_MODEL` - Model name (default: `gemini-2.5-flash-image`)
-- `PORT` - Server port (default: 5000)
+- `PORT` - Server port (default: 5000, local dev only)
 
 ## Design Guidelines
 
